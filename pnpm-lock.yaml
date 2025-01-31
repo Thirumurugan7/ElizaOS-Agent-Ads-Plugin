@@ -163,6 +163,9 @@ importers:
       '@elizaos/plugin-abstract':
         specifier: workspace:*
         version: link:../packages/plugin-abstract
+      '@elizaos/plugin-ads':
+        specifier: workspace:*
+        version: link:../packages/plugin-ads
       '@elizaos/plugin-akash':
         specifier: workspace:*
         version: link:../packages/plugin-akash
@@ -262,9 +265,6 @@ importers:
       '@elizaos/plugin-multiversx':
         specifier: workspace:*
         version: link:../packages/plugin-multiversx
-      '@elizaos/plugin-nasa':
-        specifier: workspace:*
-        version: link:../packages/plugin-nasa
       '@elizaos/plugin-near':
         specifier: workspace:*
         version: link:../packages/plugin-near
@@ -1222,6 +1222,25 @@ importers:
         specifier: 7.1.0
         version: 7.1.0
 
+  packages/plugin-ads:
+    dependencies:
+      '@elizaos/core':
+        specifier: workspace:*
+        version: link:../core
+      tsup:
+        specifier: 8.3.5
+        version: 8.3.5(@swc/core@1.10.7(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
+      whatwg-url:
+        specifier: 7.1.0
+        version: 7.1.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.23.8
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.17.9
+
   packages/plugin-akash:
     dependencies:
       '@akashnetwork/akash-api':
@@ -2052,25 +2071,6 @@ importers:
       whatwg-url:
         specifier: 7.1.0
         version: 7.1.0
-
-  packages/plugin-nasa:
-    dependencies:
-      '@elizaos/core':
-        specifier: workspace:*
-        version: link:../core
-      tsup:
-        specifier: 8.3.5
-        version: 8.3.5(@swc/core@1.10.7(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.4.49)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
-      whatwg-url:
-        specifier: 7.1.0
-        version: 7.1.0
-      zod:
-        specifier: ^3.22.4
-        version: 3.23.8
-    devDependencies:
-      '@types/node':
-        specifier: ^20.0.0
-        version: 20.17.9
 
   packages/plugin-near:
     dependencies:
@@ -16163,7 +16163,6 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
-    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.isfunction@3.0.9:
     resolution: {integrity: sha512-AirXNj15uRIMMPihnkInB4i3NHeb4iBtNg9WRWuK2o31S+ePwwNmDPaTL3o7dTJ+VXNZim7rFs4rxN4YU1oUJw==}
