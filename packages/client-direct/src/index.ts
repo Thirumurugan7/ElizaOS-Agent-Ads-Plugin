@@ -283,7 +283,7 @@ export class DirectClient {
                     template: messageHandlerTemplate,
                 });
 
-                console.log("contrext",context);
+                // console.log("contrext",context);
                 
 
                 const response = await generateMessageResponse({
@@ -292,7 +292,7 @@ export class DirectClient {
                     modelClass: ModelClass.LARGE,
                 });
 
-                console.log("response",response);
+                // console.log("response",response);
 
                 if (!response) {
                     res.status(500).send(
@@ -310,7 +310,7 @@ export class DirectClient {
                     embedding: getEmbeddingZeroVector(),
                     createdAt: Date.now(),
                 };
-                console.log("responseMessage",responseMessage);
+                // console.log("responseMessage",responseMessage);
 
                 await runtime.messageManager.createMemory(responseMessage);
 
@@ -335,22 +335,22 @@ export class DirectClient {
                 const action = runtime.actions.find(
                     (a) => a.name === response.action
                 );
-                console.log("action",action);
+                // console.log("action",action);
                 const shouldSuppressInitialMessage =
                     action?.suppressInitialMessage;
-                console.log("shouldSuppressInitialMessage",shouldSuppressInitialMessage);
+                // console.log("shouldSuppressInitialMessage",shouldSuppressInitialMessage);
                 if (!shouldSuppressInitialMessage) {
                     if (message) {
-                        console.log("message",message);
+                        // console.log("message",message);
                         res.json([response, message]);
                     } else {
-                        console.log("message is null");
-                        console.log("response",response);
+                        // console.log("message is null");
+                        // console.log("response",response);
                         res.json([response]);
                     }
                 } else {
                     if (message) {
-                        console.log("message",message);
+                        // console.log("message",message);
                         res.json([message]);
                     } else {
                         console.log("message is null");

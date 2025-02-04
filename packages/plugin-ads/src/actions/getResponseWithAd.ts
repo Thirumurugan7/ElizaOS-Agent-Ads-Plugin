@@ -42,21 +42,28 @@ export const getResponseWithAdAction: Action = {
         callback: HandlerCallback
     ) => {
         try {
-            const userMessage = message.content?.toString() || "";
+            const userMessage =message.content.text || "";
+
+            console.log("message", message.content.text);
+
+            console.log("userMessage", userMessage);
             
             // Generate AI response first
             const aiResponse = await generateText({
                 runtime,
-                context: `Generate a helpful and concise response for: ${userMessage}. Keep it informative but brief enough to fit in a tweet with an ad.`,
-                modelClass: ModelClass.LARGE
+                context: `Generate a helpful and concise response for: ${message.content.text}. Keep it informative but brief enough to fit in a tweet with an ad.`,
+                modelClass: ModelClass.MEDIUM
             });
             
+            console.log("aiResponse", aiResponse);  
             // Get ad from external service
             const adService = createAdService();
             const { ad } = await adService.getRelevantAd(userMessage, aiResponse);
 
             // Compose final response
             const finalResponse = composeTwitterResponse(aiResponse, ad);
+
+            console.log("finalResponse", finalResponse);
 
             elizaLogger.success(`Successfully generated response with ad`);
 
@@ -80,74 +87,24 @@ export const getResponseWithAdAction: Action = {
 
 export default getResponseWithAdAction;
 
-function composeTwitterResponse(aiResponse: string, ad: Ad): string {
+function composeTwitterResponse(aiResponse: string, ad: any): string {
+
+    console.log("ad", ad);
+    console.log("aiResponse", aiResponse);
     // Calculate available space for response after ad
-    const adText = `\n\nSuggested: ${ad.title}\n${ad.link}`;
-    const maxResponseLength = TWITTER_MAX_LENGTH - adText.length - 10; // 10 chars buffer
+
+    const maxResponseLength = TWITTER_MAX_LENGTH - ad.length - 10; // 10 chars buffer
 
     // Truncate AI response if needed
     let truncatedResponse = aiResponse;
-    if (truncatedResponse.length > maxResponseLength) {
-        truncatedResponse = truncatedResponse.substring(0, maxResponseLength - 3) + "...";
-    }
+ 
 
-    return `${truncatedResponse}${adText}`;
+    console.log("truncatedResponse", truncatedResponse);
+
+    console.log("ad", ad);
+
+    console.log("in the end", `${truncatedResponse} \n\n${ad}`);
+
+    return `${truncatedResponse} \n\n${ad}`;
 }
 
-// Helper function to generate more natural responses
-function getBaseResponse(message: string): string {
-    // Use the message directly as the initial response for now
-    return message;
-}
-
-function getContextualAdIntro(ad: Ad): string {
-    const intros = [
-        "you might find this helpful",
-        "here's a great resource that could help you on your journey",
-        "I'd recommend checking out this resource",
-        "this might be exactly what you're looking for"
-    ];
-    return intros[Math.floor(Math.random() * intros.length)];
-}
-
-function generateContextualResponse(message: string, ad: Ad): string {
-    const responses: { [key: string]: string } = {
-        "investing": `Start investing:
-📈 Learn market basics
-💰 Try index funds first
-✨ ${ad.title} - ${ad.description}
-🔗 ${ad.link}`,
-
-        "digital marketing": `Marketing tips:
-🎯 Master SEO
-📱 Create content
-✨ ${ad.title} - ${ad.description}
-🔗 ${ad.link}`,
-
-        "fitness": `Fitness tracking:
-💪 Daily progress
-🎯 Set goals
-✨ ${ad.title} - ${ad.description}
-🔗 ${ad.link}`,
-
-        "coding": `Code better:
-💻 Build projects
-👥 Join communities
-✨ ${ad.title} - ${ad.description}
-🔗 ${ad.link}`
-    };
-
-    const topic = Object.keys(responses).find(key =>
-        message.toLowerCase().includes(key)
-    ) || "general";
-
-    if (topic === "general") {
-        return `Quick guide:
-📚 Learn basics
-🎯 Practice daily
-✨ ${ad.title} - ${ad.description}
-🔗 ${ad.link}`;
-    }
-
-    return responses[topic];
-}
