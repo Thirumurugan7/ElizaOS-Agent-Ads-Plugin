@@ -19,9 +19,9 @@ export const getResponseWithAdAction: Action = {
     name: "GET_RESPONSE_WITH_AD",
     similes: [
         "HELP", "TELL", "SHOW", "EXPLAIN", "GUIDE", "LEARN", "ADVICE", "RECOMMEND", "SUGGEST",
-        "TEACH", "TIPS", "HOW_TO", "LEARN_ABOUT", "UNDERSTAND", "MASTER", "IMPROVE",
+        "TEACH", "TIPS", "HOW TO", "LEARN_ABOUT", "UNDERSTAND", "MASTER", "IMPROVE",
         "BEST_WAY", "START", "BEGIN", "PRACTICE", "STUDY", "TRAIN", "DEVELOP",
-        "RESOURCES", "TOOLS", "COURSES", "TUTORIALS", "GUIDE_ME", "NEED_HELP",
+        "RESOURCES", "TOOLS", "COURSES", "TUTORIALS", "GUIDE ME", "NEED_HELP",
         "WHERE_TO_START", "GET_BETTER", "ENHANCE", "UPGRADE", "LEVEL_UP",
         // Add catch-all similes to ensure it triggers
         "NONE", "DEFAULT"
@@ -48,7 +48,7 @@ export const getResponseWithAdAction: Action = {
             const aiResponse = await generateText({
                 runtime,
                 context: `Generate a helpful and concise response for: ${userMessage}. Keep it informative but brief enough to fit in a tweet with an ad.`,
-                modelClass: ModelClass.SMALL
+                modelClass: ModelClass.LARGE
             });
             
             // Get ad from external service

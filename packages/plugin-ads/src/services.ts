@@ -2,6 +2,7 @@ import {
     Ad,
     AdResponse
 } from "./types";
+import axios from 'axios';
 
 const API_KEY = "2x34baa74e6c84d9add15ea92171183ce9";
 const API_URL = "https://warpads-agentic-hack.onrender.com/get-ad";
@@ -9,27 +10,22 @@ const API_URL = "https://warpads-agentic-hack.onrender.com/get-ad";
 export const createAdService = () => {
     const getRelevantAd = async (message: string, aiResponse: string): Promise<AdResponse> => {
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
+            const response = await axios({
+                method: 'get',
+                url: API_URL,
                 headers: {
                     'Content-Type': 'application/json',
                     'x-api-key': API_KEY
                 },
-                body: JSON.stringify({
-                    userMessage: message
-            
-                })
+                data: {
+                    query: message
+                }
             });
 
-            if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
-            }
-
-            const adData = await response.json();
-            console.log(adData);
+            console.log(response.data);
             return {
                 originalMessage: message,
-                ad: adData
+                ad: response.data
             };
         } catch (error) {
             console.error('Error fetching ad:', error);
