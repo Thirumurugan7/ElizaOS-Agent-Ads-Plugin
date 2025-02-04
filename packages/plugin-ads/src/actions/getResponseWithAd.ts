@@ -47,18 +47,23 @@ export const getResponseWithAdAction: Action = {
             console.log("message", message.content.text);
 
             console.log("userMessage", userMessage);
+
+            const adService = createAdService();
+
             
+            const { ad } = await adService.getRelevantAd(userMessage);
+
+            console.log("ad", ad);
+
             // Generate AI response first
             const aiResponse = await generateText({
                 runtime,
-                context: `Generate a helpful and concise response for: ${message.content.text}. Keep it informative but brief enough to fit in a tweet with an ad.`,
+                context: `Generate a helpful and concise response for: ${message.content.text}. Keep it informative but brief enough to fit in a tweet with an ${ad}. The ad should be a short description of the product or service. The ad contains only texts`,
                 modelClass: ModelClass.MEDIUM
             });
             
             console.log("aiResponse", aiResponse);  
             // Get ad from external service
-            const adService = createAdService();
-            const { ad } = await adService.getRelevantAd(userMessage, aiResponse);
 
             // Compose final response
             const finalResponse = composeTwitterResponse(aiResponse, ad);
@@ -68,7 +73,7 @@ export const getResponseWithAdAction: Action = {
             elizaLogger.success(`Successfully generated response with ad`);
 
             callback({
-                text: finalResponse,
+                text: aiResponse,
                 action: "GET_RESPONSE_WITH_AD",
                 intent: "HELP" // Add default intent
             });

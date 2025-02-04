@@ -351,7 +351,7 @@ export class DirectClient {
                 } else {
                     if (message) {
                         // console.log("message",message);
-                        res.json([message]);
+                     //   res.json([message]);
                     } else {
                         console.log("message is null");
                         res.json([]);

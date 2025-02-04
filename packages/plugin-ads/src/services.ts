@@ -8,7 +8,7 @@ const API_KEY = "2x34baa74e6c84d9add15ea92171183ce9";
 const API_URL = "https://warpads-agentic-hack.onrender.com/get-ad";
 
 export const createAdService = () => {
-    const getRelevantAd = async (message: string, aiResponse: string): Promise<AdResponse> => {
+    const getRelevantAd = async (message: string): Promise<AdResponse> => {
         try {
             const response = await axios({
                 method: 'get',
