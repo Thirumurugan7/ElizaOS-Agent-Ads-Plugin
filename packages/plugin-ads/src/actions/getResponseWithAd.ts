@@ -6,10 +6,14 @@ import {
     IAgentRuntime,
     Memory,
     State,
+    ModelClass,
+    generateText
 } from "@elizaos/core";
 import { createAdService } from "../services";
 import { getAdResponseExamples } from "../examples";
 import { Ad } from "../types";
+
+const TWITTER_MAX_LENGTH = 280;
 
 export const getResponseWithAdAction: Action = {
     name: "GET_RESPONSE_WITH_AD",
@@ -18,14 +22,20 @@ export const getResponseWithAdAction: Action = {
         "TEACH", "TIPS", "HOW_TO", "LEARN_ABOUT", "UNDERSTAND", "MASTER", "IMPROVE",
         "BEST_WAY", "START", "BEGIN", "PRACTICE", "STUDY", "TRAIN", "DEVELOP",
         "RESOURCES", "TOOLS", "COURSES", "TUTORIALS", "GUIDE_ME", "NEED_HELP",
-        "WHERE_TO_START", "GET_BETTER", "ENHANCE", "UPGRADE", "LEVEL_UP"
+        "WHERE_TO_START", "GET_BETTER", "ENHANCE", "UPGRADE", "LEVEL_UP",
+        // Add catch-all similes to ensure it triggers
+        "NONE", "DEFAULT"
     ],
     description: "Get a response augmented with a relevant advertisement.",
     validate: async (_runtime: IAgentRuntime) => {
         return true;
     },
+    shouldHandle: async (_runtime: IAgentRuntime, message: Memory) => {
+        // Always handle the message
+        return true;
+    },
     handler: async (
-        _runtime: IAgentRuntime,
+        runtime: IAgentRuntime,
         message: Memory,
         _state: State,
         _options: { [key: string]: unknown },
@@ -33,15 +43,27 @@ export const getResponseWithAdAction: Action = {
     ) => {
         try {
             const userMessage = message.content?.toString() || "";
+            
+            // Generate AI response first
+            const aiResponse = await generateText({
+                runtime,
+                context: `Generate a helpful and concise response for: ${userMessage}. Keep it informative but brief enough to fit in a tweet with an ad.`,
+                modelClass: ModelClass.SMALL
+            });
+            
+            // Get ad from external service
             const adService = createAdService();
-            const { ad } = adService.getRelevantAd(userMessage);
+            const { ad } = await adService.getRelevantAd(userMessage, aiResponse);
 
-
+            // Compose final response
+            const finalResponse = composeTwitterResponse(aiResponse, ad);
 
             elizaLogger.success(`Successfully generated response with ad`);
 
             callback({
-                text: `${generateContextualResponse(userMessage, ad)}`
+                text: finalResponse,
+                action: "GET_RESPONSE_WITH_AD",
+                intent: "HELP" // Add default intent
             });
             return true;
         } catch (error: any) {
@@ -57,6 +79,20 @@ export const getResponseWithAdAction: Action = {
 } as Action;
 
 export default getResponseWithAdAction;
+
+function composeTwitterResponse(aiResponse: string, ad: Ad): string {
+    // Calculate available space for response after ad
+    const adText = `\n\nSuggested: ${ad.title}\n${ad.link}`;
+    const maxResponseLength = TWITTER_MAX_LENGTH - adText.length - 10; // 10 chars buffer
+
+    // Truncate AI response if needed
+    let truncatedResponse = aiResponse;
+    if (truncatedResponse.length > maxResponseLength) {
+        truncatedResponse = truncatedResponse.substring(0, maxResponseLength - 3) + "...";
+    }
+
+    return `${truncatedResponse}${adText}`;
+}
 
 // Helper function to generate more natural responses
 function getBaseResponse(message: string): string {
