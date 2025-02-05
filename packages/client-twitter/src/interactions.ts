@@ -117,6 +117,7 @@ export class TwitterInteractionClient {
 
     async handleTwitterInteractions() {
         elizaLogger.log("Checking Twitter interactions");
+        elizaLogger.debug("[Twitter] Available actions:", this.runtime.actions.map(a => a.name));
 
         const twitterUsername = this.client.profile.username;
         try {
@@ -312,6 +313,7 @@ export class TwitterInteractionClient {
         message: Memory;
         thread: Tweet[];
     }) {
+        elizaLogger.debug("[Twitter] Handling tweet:", tweet.text);
         if (tweet.userId === this.client.profile.id) {
             // console.log("skipping tweet from bot itself", tweet.id);
             // Skip processing if the tweet is from the bot itself
@@ -428,96 +430,99 @@ export class TwitterInteractionClient {
             modelClass: ModelClass.MEDIUM,
         });
 
-        // Promise<"RESPOND" | "IGNORE" | "STOP" | null> {
-        if (shouldRespond !== "RESPOND") {
-            elizaLogger.log("Not responding to message");
-            return { text: "Response Decision:", action: shouldRespond };
-        }
+        if (shouldRespond === "RESPOND") {
+            elizaLogger.debug("[Twitter] Should respond to tweet, checking actions");
+            
+            // First try to process through actions
+            let actionHandled = false;
+            await this.runtime.processActions(
+                message,
+                [],
+                state,
+                async (response) => {
+                    elizaLogger.debug("[Twitter] Processing action response:", response);
+                    actionHandled = true;
+                    const memories = await sendTweet(
+                        this.client,
+                        response,
+                        message.roomId,
+                        this.client.twitterConfig.TWITTER_USERNAME,
+                        tweet.id
+                    );
+                    return memories;
+                }
+            );
 
-        const context = composeContext({
-            state,
-            template:
-                this.runtime.character.templates
-                    ?.twitterMessageHandlerTemplate ||
-                this.runtime.character?.templates?.messageHandlerTemplate ||
-                twitterMessageHandlerTemplate,
-        });
-        elizaLogger.debug("Interactions prompt:\n" + context);
+            // If no action handled it, fall back to default response generation
+            if (!actionHandled) {
+                elizaLogger.debug("[Twitter] No action handled the tweet, falling back to default response");
+                const context = composeContext({
+                    state,
+                    template:
+                        this.runtime.character.templates?.twitterMessageHandlerTemplate ||
+                        this.runtime.character?.templates?.messageHandlerTemplate ||
+                        twitterMessageHandlerTemplate,
+                });
+                elizaLogger.debug("Interactions prompt:\n" + context);
 
-        const response = await generateMessageResponse({
-            runtime: this.runtime,
-            context,
-            modelClass: ModelClass.LARGE,
-        });
+                const response = await generateMessageResponse({
+                    runtime: this.runtime,
+                    context,
+                    modelClass: ModelClass.LARGE,
+                });
 
-        const removeQuotes = (str: string) =>
-            str.replace(/^['"](.*)['"]$/, "$1");
+                const removeQuotes = (str: string) =>
+                    str.replace(/^['"](.*)['"]$/, "$1");
 
-        const stringId = stringToUuid(tweet.id + "-" + this.runtime.agentId);
+                const stringId = stringToUuid(tweet.id + "-" + this.runtime.agentId);
 
-        response.inReplyTo = stringId;
+                response.inReplyTo = stringId;
+                response.text = removeQuotes(response.text);
 
-        response.text = removeQuotes(response.text);
-
-        if (response.text) {
-            if (this.isDryRun) {
-                elizaLogger.info(
-                    `Dry run: Selected Post: ${tweet.id} - ${tweet.username}: ${tweet.text}\nAgent's Output:\n${response.text}`
-                );
-            } else {
-                try {
-                    const callback: HandlerCallback = async (
-                        response: Content
-                    ) => {
-                        const memories = await sendTweet(
-                            this.client,
-                            response,
-                            message.roomId,
-                            this.client.twitterConfig.TWITTER_USERNAME,
-                            tweet.id
+                if (response.text) {
+                    if (this.isDryRun) {
+                        elizaLogger.info(
+                            `Dry run: Selected Post: ${tweet.id} - ${tweet.username}: ${tweet.text}\nAgent's Output:\n${response.text}`
                         );
-                        return memories;
-                    };
+                    } else {
+                        try {
+                            const memories = await sendTweet(
+                                this.client,
+                                response,
+                                message.roomId,
+                                this.client.twitterConfig.TWITTER_USERNAME,
+                                tweet.id
+                            );
 
-                    const responseMessages = await callback(response);
+                            state = (await this.runtime.updateRecentMessageState(
+                                state
+                            )) as State;
 
-                    state = (await this.runtime.updateRecentMessageState(
-                        state
-                    )) as State;
+                            for (const responseMessage of memories) {
+                                if (responseMessage === memories[memories.length - 1]) {
+                                    responseMessage.content.action = response.action;
+                                } else {
+                                    responseMessage.content.action = "CONTINUE";
+                                }
+                                await this.runtime.messageManager.createMemory(responseMessage);
+                            }
 
-                    for (const responseMessage of responseMessages) {
-                        if (
-                            responseMessage ===
-                            responseMessages[responseMessages.length - 1]
-                        ) {
-                            responseMessage.content.action = response.action;
-                        } else {
-                            responseMessage.content.action = "CONTINUE";
+                            const responseInfo = `Context:\n\n${context}\n\nSelected Post: ${tweet.id} - ${tweet.username}: ${tweet.text}\nAgent's Output:\n${response.text}`;
+
+                            await this.runtime.cacheManager.set(
+                                `twitter/tweet_generation_${tweet.id}.txt`,
+                                responseInfo
+                            );
+                            await wait();
+                        } catch (error) {
+                            elizaLogger.error(`Error sending response tweet: ${error}`);
                         }
-                        console.log("Creating Memory called in interactions");
-                        await this.runtime.messageManager.createMemory(
-                            responseMessage
-                        );
                     }
-
-                    await this.runtime.processActions(
-                        message,
-                        responseMessages,
-                        state,
-                        callback
-                    );
-
-                    const responseInfo = `Context:\n\n${context}\n\nSelected Post: ${tweet.id} - ${tweet.username}: ${tweet.text}\nAgent's Output:\n${response.text}`;
-
-                    await this.runtime.cacheManager.set(
-                        `twitter/tweet_generation_${tweet.id}.txt`,
-                        responseInfo
-                    );
-                    await wait();
-                } catch (error) {
-                    elizaLogger.error(`Error sending response tweet: ${error}`);
                 }
             }
+        } else {
+            elizaLogger.log("Not responding to message");
+            return { text: "Response Decision:", action: shouldRespond };
         }
     }
 

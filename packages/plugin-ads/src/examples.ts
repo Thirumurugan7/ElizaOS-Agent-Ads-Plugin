@@ -1,109 +1,110 @@
 import { ActionExample } from "@elizaos/core";
 
-export const getAdResponseExamples: ActionExample[][] = [
-    // Learning & Education Examples
+export const getAdResponseExamples: ActionExample[][] = 
+[
     [
         {
-            user: "{{user1}}",
-            content: {
-                text: "What's the best way to learn digital marketing?",
-            },
+            "user": "{{user1}}",
+            "content": {
+                "text": "Can you recommend some unique restaurants in Tokyo for a special anniversary dinner?"
+            }
         },
         {
-            user: "{{agent}}",
-            content: {
-                text: "Master SEO, content creation & social media. Build real campaigns. Track metrics. Focus on hands-on practice & stay updated with trends.\n\nSuggested: HubSpot Academy Digital Marketing\nhttps://academy.hubspot.com/digital-marketing",
-                action: "GET_RESPONSE_WITH_AD",
-                intent: "LEARN"
-            },
+            "user": "{{agent}}",
+            "content": {
+                "text": "I'll search for extraordinary dining experiences in Tokyo that would be perfect for your anniversary.",
+                "action": "GET_RESPONSE_WITH_AD"
+            }
+        },
+        {
+            "user": "{{agent}}",
+            "content": {
+                "text": "Here are three exceptional restaurant recommendations for your anniversary in Tokyo:\n\n1. Narisawa (Minami-Aoyama)\n- 2 Michelin stars\n- Innovative Japanese cuisine\n- Signature sustainable gastronomy\n- Price range: ¥45,000 per person\n- Advance booking required: 3 months\n\n2. Robot Restaurant (Shinjuku)\n- Interactive dining experience\n- High-tech entertainment show\n- Modern Japanese fusion cuisine\n- Price range: ¥30,000 per person\n- Includes dinner show tickets\n\n3. Ninja Akasaka\n- Themed ninja castle restaurant\n- Traditional Japanese dishes\n- Interactive ninja performances\n- Price range: ¥15,000 per person\n- Special anniversary arrangement available\n\nWould you like me to make a reservation at any of these restaurants?"
+            }
         }
     ],
     [
         {
-            user: "{{user1}}",
-            content: {
-                text: "How can I learn blockchain development?",
-            },
+            "user": "{{user1}}",
+            "content": {
+                "text": "I want to invest in cryptocurrency. What's the best strategy for a $10,000 investment?"
+            }
         },
         {
-            user: "{{agent}}",
-            content: {
-                text: "Start with Web3 basics, smart contracts & Solidity. Build simple DApps. Join dev communities. Practice security best practices.\n\nSuggested: Web3 University - Complete Developer Course\nhttps://web3.university/courses/blockchain-dev",
-                action: "GET_RESPONSE_WITH_AD",
-                intent: "LEARN"
-            },
+            "user": "{{agent}}",
+            "content": {
+                "text": "I'll analyze current crypto market trends and suggest a diversified investment strategy.",
+                "action": "GET_RESPONSE_WITH_AD"
+            }
+        },
+        {
+            "user": "{{agent}}",
+            "content": {
+                "text": "Based on market analysis, here's a suggested cryptocurrency investment strategy for your $10,000:\n\n1. Core Holdings (60% - $6,000)\n- Bitcoin (BTC): 40% ($4,000)\n- Ethereum (ETH): 20% ($2,000)\n\n2. Mid-Cap Altcoins (30% - $3,000)\n- Solana (SOL): 15% ($1,500)\n- Polkadot (DOT): 15% ($1,500)\n\n3. Emerging Projects (10% - $1,000)\n- DeFi tokens: 5% ($500)\n- Gaming/Metaverse tokens: 5% ($500)\n\nRecommended Strategy:\n- Dollar-cost averaging over 3 months\n- Set stop-loss orders at 15%\n- Monthly portfolio rebalancing\n\nWould you like me to provide detailed entry points for these investments?"
+            }
         }
     ],
-
-    // Investment & Finance Examples
     [
         {
-            user: "{{user1}}",
-            content: {
-                text: "I want to start investing in stocks. Where should I begin?",
-            },
+            "user": "{{user1}}",
+            "content": {
+                "text": "What are the best adventure activities available in New Zealand for a 7-day trip?"
+            }
         },
         {
-            user: "{{agent}}",
-            content: {
-                text: "Start with market basics & index funds. Learn risk management. Research companies before buying. Build a diversified portfolio slowly.\n\nSuggested: Fidelity Learn to Invest\nhttps://fidelity.com/learn",
-                action: "GET_RESPONSE_WITH_AD",
-                intent: "START"
-            },
+            "user": "{{agent}}",
+            "content": {
+                "text": "I'll search for the top-rated adventure activities across New Zealand that can fit into a week-long itinerary.",
+                "action": "GET_RESPONSE_WITH_AD"
+            }
+        },
+        {
+            "user": "{{agent}}",
+            "content": {
+                "text": "Here's a curated list of premier adventure activities in New Zealand:\n\nQueenstown Region:\n1. Skydiving over Lake Wakatipu\n- Height: 15,000 ft\n- Duration: 3 hours total\n- Cost: NZD 499\n- Includes: Photos and videos\n\n2. Shotover River Jet Boating\n- Speed: Up to 85 km/h\n- Duration: 1.5 hours\n- Cost: NZD 159\n- Multiple daily departures\n\nRotorua Area:\n3. White Water Rafting\n- Grade 5 rapids\n- Duration: 4 hours\n- Cost: NZD 249\n- Professional guides included\n\nFox Glacier:\n4. Heli-hiking\n- 3-hour glacier exploration\n- Duration: 4 hours total\n- Cost: NZD 499\n- Weather dependent\n\nWould you like me to check availability and make bookings for any of these activities?"
+            }
         }
     ],
-
-    // Technology & Programming Examples
     [
         {
-            user: "{{user1}}",
-            content: {
-                text: "How can I improve my coding skills?",
-            },
+            "user": "{{user1}}",
+            "content": {
+                "text": "What sustainable tourism options are available in Costa Rica?"
+            }
         },
         {
-            user: "{{agent}}",
-            content: {
-                text: "Code daily. Build real projects. Learn git. Join open source. Pick one language & master it. Follow coding standards & best practices.\n\nSuggested: Frontend Masters Complete Web Dev\nhttps://frontendmasters.com",
-                action: "GET_RESPONSE_WITH_AD",
-                intent: "IMPROVE"
-            },
+            "user": "{{agent}}",
+            "content": {
+                "text": "I'll research eco-friendly accommodations and activities in Costa Rica that support sustainable tourism.",
+                "action": "GET_RESPONSE_WITH_AD"
+            }
+        },
+        {
+            "user": "{{agent}}",
+            "content": {
+                "text": "Here are top sustainable tourism options in Costa Rica:\n\nEco-Lodges:\n1. Lapa Rios Lodge (Osa Peninsula)\n- 100% rainforest conservation area\n- Solar-powered facilities\n- Local community employment\n- Rate: $450/night\n- Includes guided nature tours\n\nConservation Activities:\n2. Sea Turtle Protection Program\n- Location: Tortuguero\n- Duration: 3-day program\n- Cost: $299\n- Includes: Research participation\n\nSustainable Tours:\n3. Coffee Plantation Tour\n- Organic farming practices\n- Fair trade certified\n- Duration: Full day\n- Cost: $89\n- Includes: Farm-to-table lunch\n\nWould you like more details about any of these eco-friendly options?"
+            }
         }
     ],
-
-    // Career Development Examples
     [
         {
-            user: "{{user1}}",
-            content: {
-                text: "How do I become a data scientist?",
-            },
+            "user": "{{user1}}",
+            "content": {
+                "text": "I'm interested in starting a small business in Singapore. What sectors show the most promise?"
+            }
         },
         {
-            user: "{{agent}}",
-            content: {
-                text: "Master Python & statistics. Learn ML algorithms. Practice with real datasets. Build a portfolio. Get certified in key tools.\n\nSuggested: DataCamp Data Science Career Track\nhttps://datacamp.com/career-track",
-                action: "GET_RESPONSE_WITH_AD",
-                intent: "GUIDE"
-            },
-        }
-    ],
-
-    // General Skill Development
-    [
-        {
-            user: "{{user1}}",
-            content: {
-                text: "What's the fastest way to learn a new language?",
-            },
+            "user": "{{agent}}",
+            "content": {
+                "text": "I'll analyze Singapore's current business environment and growth sectors for small business opportunities.",
+                "action": "GET_RESPONSE_WITH_AD"
+            }
         },
         {
-            user: "{{agent}}",
-            content: {
-                text: "Practice daily. Use language apps. Watch native content. Join conversation groups. Focus on common phrases first.\n\nSuggested: Babbel Language Learning\nhttps://babbel.com/premium",
-                action: "GET_RESPONSE_WITH_AD",
-                intent: "RECOMMEND"
-            },
+            "user": "{{agent}}",
+            "content": {
+                "text": "Based on current market analysis, here are the most promising sectors in Singapore:\n\n1. FinTech Industry\n- Market size: $3.8B annually\n- Growth rate: 25% YoY\n- Initial investment: $50,000-$150,000\n- Key opportunity: Digital payment solutions\n\n2. E-commerce Services\n- Market penetration: 73%\n- Growth rate: 30% annually\n- Initial investment: $20,000-$100,000\n- Focus: Last-mile logistics\n\n3. Urban Farming\n- Government grants available\n- Growth rate: 22% annually\n- Initial investment: $40,000-$200,000\n- High demand for local produce\n\nWould you like detailed market reports or information about business registration processes?"
+            }
         }
     ]
-];
+]
